@@ -62,3 +62,46 @@ def test_int_range_setup_fail(start, stop, step):
     with pytest.raises(TypeError):
         argparse_custom_types.int_range(start, stop, step)
 
+
+@pytest.mark.parametrize("min_value, test_value, expected_result", [
+    (20, "20", 20), (20, "21", 21), (500, "20000", 20000),
+    (0, "0", 0), (-50, "-20", -20), (-50, "0", 0), (-50, "20", 20),
+    (10.5, "12", 12),
+])
+def test_int_above(min_value, test_value, expected_result):
+    test_type = argparse_custom_types.int_above(min_value)
+    result = test_type(test_value)
+    assert result == expected_result
+
+
+@pytest.mark.parametrize("min_value, test_value", [
+    (20, "19"), (20, "0"), (20, "-20"),
+    (-20, "-21"), (-20, "-400"), (10.5, "10"),
+    (10, "12.5"), (10.5, "12.5"),
+])
+def test_int_above_fail(min_value, test_value):
+    test_type = argparse_custom_types.int_above(min_value)
+    with pytest.raises(argparse_custom_types.argparse.ArgumentTypeError):
+        test_type(test_value)
+
+
+@pytest.mark.parametrize("max_value, test_value, expected_result", [
+    (20, "15", 15), (20, "-10", -10), (0, "0", 0),
+    (-10, "-25", -25)
+])
+def test_int_below(max_value, test_value, expected_result):
+    test_type = argparse_custom_types.int_below(max_value)
+    result = test_type(test_value)
+    assert result == expected_result
+
+
+@pytest.mark.parametrize("max_value, test_value", [
+    (20, "21"), (15, "215"), (-25, "-19"),
+    (20, "string"), (20, "10.4"),
+])
+def test_int_below_fail(max_value, test_value):
+    test_type = argparse_custom_types.int_below(max_value)
+    with pytest.raises(argparse_custom_types.argparse.ArgumentTypeError):
+        test_type(test_value)
+
+

@@ -38,3 +38,43 @@ def test_int_range_full_fail(start_stop_step, test_values, capsys):
     captured = capsys.readouterr().err
     assert f"{test_values} is an invalid int value in " \
            f"range {start} - {stop}" in captured
+
+
+@pytest.mark.parametrize("min_value, test_values, expected_results", [
+    (5, "5", 5), (5, "6", 6), (-500, "-350", -350)
+])
+def test_int_above_full(min_value, test_values, expected_results):
+    test_type = argparse_custom_types.int_above(min_value)
+    result = _argparse_runner(test_type, test_values)
+    assert result == expected_results
+
+
+@pytest.mark.parametrize("min_value, test_value", [
+    (40, "39"), (40, "-39"), (-35, "-45"),
+    (5, "string"), (5, "10.5"), (5, "=10"),
+])
+def test_int_above_full_fail(min_value, test_value, capsys):
+    test_type = argparse_custom_types.int_above(min_value)
+    _argparse_runner_raises(test_type, test_value)
+    captured = capsys.readouterr().err
+    assert f"{test_value} is an invalid int value above {min_value}" in captured
+
+
+@pytest.mark.parametrize("max_value, test_value, expected_result", [
+    (10, "5", 5), (-10, "-20", -20), (50, "-120", -120)
+])
+def test_int_below_full(max_value, test_value, expected_result):
+    test_type = argparse_custom_types.int_below(max_value)
+    result = _argparse_runner(test_type, test_value)
+    assert result == expected_result
+
+
+@pytest.mark.parametrize("max_value, test_value", [
+    (10, "12"), (-10, "-9"), (20, "string"), (20, "10.8"),
+])
+def test_int_below_full_fail(max_value, test_value, capsys):
+    test_type = argparse_custom_types.int_below(max_value)
+    _argparse_runner_raises(test_type, test_value)
+    captured = capsys.readouterr().err
+    assert f"{test_value} is an invalid int value below {max_value}" in captured
+
