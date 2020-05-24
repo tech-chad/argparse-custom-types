@@ -78,3 +78,36 @@ def test_int_below_full_fail(max_value, test_value, capsys):
     captured = capsys.readouterr().err
     assert f"{test_value} is an invalid int value below {max_value}" in captured
 
+
+@pytest.mark.parametrize("test_seq, test_value", [
+    (["1", "string", "0.45%"], "1"),
+    (("1", "string", "0.45%"), "string"),
+    (["1", "string", "0.45%"], "0.45%"),
+])
+def test_in_sequence_string_full(test_value, test_seq):
+    test_type = argparse_custom_types.in_sequence_strings(test_seq)
+    result = _argparse_runner(test_type, test_value)
+    assert result == test_value
+
+
+@pytest.mark.parametrize("test_seq, test_value", [
+    (("50", "test", "$4.45"), "5"),
+    (["50", "test", "$4.45"], "string"),
+])
+def test_in_sequence_string_full_fail(test_seq, test_value, capsys):
+    test_type = argparse_custom_types.in_sequence_strings(test_seq)
+    _argparse_runner_raises(test_type, test_value)
+    captured = capsys.readouterr().err
+    assert f"{test_value} is not in the excepted value list" in captured
+
+
+@pytest.mark.parametrize("test_seq", [
+    ["a", "string", "1", "$4.50"],
+    ("a", "string", "1", "$4.50")
+])
+def test_in_sequence_string_full_fail_show(test_seq, capsys):
+    test_type = argparse_custom_types.in_sequence_strings(test_seq, True)
+    _argparse_runner_raises(test_type, "20")
+    captured = capsys.readouterr().err
+    assert f"""20 is not in the excepted value list
+a, string, 1, $4.50""" in captured

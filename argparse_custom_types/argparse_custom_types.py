@@ -2,6 +2,9 @@
 import argparse
 
 from typing import Callable
+from typing import List
+from typing import Tuple
+from typing import Union
 
 
 def int_range(start: int, stop: int, step: int = 1) -> Callable:
@@ -55,3 +58,27 @@ def int_below(maximum: int) -> Callable:
             else:
                 return int_value
     return _int_below
+
+
+def in_sequence_strings(sequence: Union[Tuple[str], List[str]],
+                        show_on_invalid: bool = False,
+                        ) -> Callable:
+    """
+    excepts a value that is in the tuple or list and returns
+    that value as a string
+    """
+    seq_string = ", ".join(sequence)
+
+    def _in_sequence_strings(value: str) -> str:
+        msg = f"{value} is not in the excepted value list"
+        if show_on_invalid:
+            error_msg = f"{msg}\n{seq_string}"
+        else:
+            error_msg = msg
+        if value not in sequence:
+            raise argparse.ArgumentTypeError(error_msg)
+        else:
+            return value
+
+    return _in_sequence_strings
+

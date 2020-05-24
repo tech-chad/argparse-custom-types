@@ -105,3 +105,26 @@ def test_int_below_fail(max_value, test_value):
         test_type(test_value)
 
 
+@pytest.mark.parametrize("test_seq, test_value", [
+    (["1", "4", "7", "10"], "7"),
+    (("3", "7", "10", "12"), "12"),
+    (["one", "two", "three"], "one"),
+    (("test", "100", "10.5", "$6.00"), "$6.00"),
+    (("test", "100", "10.5", "$6.00"), "10.5"),
+])
+def test_in_sequence_string(test_seq, test_value):
+    test_type = argparse_custom_types.in_sequence_strings(test_seq)
+    result = test_type(test_value)
+    assert result == test_value
+
+
+@pytest.mark.parametrize("test_seq, test_value", [
+    (["1", "five", "8.89", "*90"], "5"),
+    (["1", "five", "8.89", "*90"], "8"),
+    (["1", "five", "8.89", "*90"], "string"),
+    (("1", "five", "8.89", "*90"), "1.0"),
+])
+def test_in_sequence_string(test_seq, test_value):
+    test_type = argparse_custom_types.in_sequence_strings(test_seq)
+    with pytest.raises(argparse_custom_types.argparse.ArgumentTypeError):
+        test_type(test_value)
