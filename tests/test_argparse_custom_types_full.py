@@ -111,3 +111,51 @@ def test_in_sequence_string_full_fail_show(test_seq, capsys):
     captured = capsys.readouterr().err
     assert f"""20 is not in the excepted value list
 a, string, 1, $4.50""" in captured
+
+
+@pytest.mark.parametrize("options, test_value, expected_results", [
+    ((True, False, False), "22", 22),
+    ((True, True, False), "-22", -22),
+])
+def test_int_even_full(options, test_value, expected_results):
+    test_type = argparse_custom_types.int_even(*options)
+    result = _argparse_runner(test_type, test_value)
+    assert result == expected_results
+
+
+@pytest.mark.parametrize("options, test_value", [
+    ((True, False, False), "0"),
+    ((True, False, False), "22.2"),
+    ((True, False, False), "-22.2"),
+    ((True, False, False), "string"),
+    ((True, True, False), "0"),
+])
+def test_int_even_full_fail(options, test_value, capsys):
+    test_type = argparse_custom_types.int_even(*options)
+    _argparse_runner_raises(test_type, test_value)
+    captured = capsys.readouterr().err
+    assert f"{test_value} is an invalid even int" in captured
+
+
+@pytest.mark.parametrize("options, test_value, expected_results", [
+    ((True, False, False), "87", 87),
+    ((True, True, False), "-97", -97),
+])
+def test_int_odd_full(options, test_value, expected_results):
+    test_type = argparse_custom_types.int_odd(*options)
+    result = _argparse_runner(test_type, test_value)
+    assert result == expected_results
+
+
+@pytest.mark.parametrize("options, test_value", [
+    ((True, False, False), "0"),
+    ((True, False, False), "22.3"),
+    ((True, False, False), "-22.3"),
+    ((True, False, False), "string"),
+    ((True, True, False), "0"),
+])
+def test_int_odd_full_fail(options, test_value, capsys):
+    test_type = argparse_custom_types.int_odd(*options)
+    _argparse_runner_raises(test_type, test_value)
+    captured = capsys.readouterr().err
+    assert f"{test_value} is an invalid odd int" in captured

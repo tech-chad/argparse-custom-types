@@ -128,3 +128,66 @@ def test_in_sequence_string(test_seq, test_value):
     test_type = argparse_custom_types.in_sequence_strings(test_seq)
     with pytest.raises(argparse_custom_types.argparse.ArgumentTypeError):
         test_type(test_value)
+
+
+@pytest.mark.parametrize("test_value, expected_result", [
+    ("2", 2), ("12", 12), ("48", 48), ("345992", 345992),
+])
+def test_int_even_default(test_value, expected_result):
+    test_type = argparse_custom_types.int_even()
+    result = test_type(test_value)
+    assert result == expected_result
+
+
+@pytest.mark.parametrize("options, test_values, expected_result", [
+    ((True, True, False), "10", 10),
+    ((True, True, False), "-10", -10),
+    ((True, True, False), "-122", -122),
+    ((True, True, True), "0", 0),
+    ((False, True, False), "-22", -22),
+    ((False, True, True), "0", 0),
+])
+def test_int_even_options(options, test_values, expected_result):
+    test_type = argparse_custom_types.int_even(*options)
+    result = test_type(test_values)
+    assert result == expected_result
+
+
+@pytest.mark.parametrize("options, test_value", [
+    ((True, False, False), "0"),
+    ((True, False, False), "-22"),
+    ((True, False, False), "99"),
+    ((True, True, False), "0"),
+    ((True, True, False), "-87"),
+    ((False, True, False), "22"),
+    ((False, True, False), "-23"),
+    ((False, True, False), "0"),
+])
+def test_int_even_options_fail(options, test_value):
+    test_type = argparse_custom_types.int_even(*options)
+    with pytest.raises(argparse_custom_types.argparse.ArgumentTypeError):
+        test_type(test_value)
+
+
+@pytest.mark.parametrize("options, test_value, expected_results", [
+    ((True, False, False), "5", 5),
+    ((True, False, True), "0", 0),
+    ((True, True, False), "-5", -5),
+    ((False, True, False), "-7", -7),
+])
+def test_int_odd_options(options, test_value, expected_results):
+    test_type = argparse_custom_types.int_odd(*options)
+    result = test_type(test_value)
+    assert result == expected_results
+
+
+@pytest.mark.parametrize("options, test_value", [
+    ((True, False, False), "-7"),
+    ((True, True, False), "8"),
+    ((False, True, False), "7"),
+    ((True, False, False), "0"),
+])
+def test_int_odd_options_fail(options, test_value):
+    test_type = argparse_custom_types.int_odd(*options)
+    with pytest.raises(argparse_custom_types.argparse.ArgumentTypeError):
+        test_type(test_value)

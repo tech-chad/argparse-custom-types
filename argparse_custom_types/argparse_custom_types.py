@@ -60,6 +60,58 @@ def int_below(maximum: int) -> Callable:
     return _int_below
 
 
+def int_even(pos_number: bool = True,
+             neg_number: bool = False,
+             include_zero: bool = False,
+             ) -> Callable:
+    """ even int value """
+
+    def _int_even(value: str) -> int:
+        error_msg = f"{value} is an invalid even int"
+        try:
+            int_value = int(value)
+        except ValueError:
+            raise argparse.ArgumentTypeError(error_msg)
+        else:
+            if int_value == 0 and not include_zero:
+                raise argparse.ArgumentTypeError(error_msg)
+            elif int_value < 0 and not neg_number:
+                raise argparse.ArgumentTypeError(error_msg)
+            elif int_value > 0 and not pos_number:
+                raise argparse.ArgumentTypeError(error_msg)
+            elif int_value % 2 != 0:
+                raise argparse.ArgumentTypeError(error_msg)
+            else:
+                return int_value
+    return _int_even
+
+
+def int_odd(pos_number: bool = True,
+            neg_number: bool = False,
+            include_zero: bool = False,
+            ) -> Callable:
+    """ odd int value """
+
+    def _int_odd(value: str) -> int:
+        error_msg = f"{value} is an invalid odd int"
+        try:
+            int_value = int(value)
+        except ValueError:
+            raise argparse.ArgumentTypeError(error_msg)
+        else:
+            if int_value < 0 and not neg_number:
+                raise argparse.ArgumentTypeError(error_msg)
+            elif int_value > 0 and not pos_number:
+                raise argparse.ArgumentTypeError(error_msg)
+            elif int_value == 0 and include_zero:
+                return int_value
+            elif int_value % 2 == 0:
+                raise argparse.ArgumentTypeError(error_msg)
+            else:
+                return int_value
+    return _int_odd
+
+
 def in_sequence_strings(sequence: Union[Tuple[str], List[str]],
                         show_on_invalid: bool = False,
                         ) -> Callable:
