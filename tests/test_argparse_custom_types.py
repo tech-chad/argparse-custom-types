@@ -1,6 +1,6 @@
 import pytest
 
-from argparse_custom_types import argparse_custom_types
+import argparse_custom_types
 
 
 @pytest.mark.parametrize("test_values, expected_results", [
