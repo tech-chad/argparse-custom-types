@@ -123,11 +123,32 @@ def test_in_sequence_string(test_seq, test_value):
     (["1", "five", "8.89", "*90"], "8"),
     (["1", "five", "8.89", "*90"], "string"),
     (("1", "five", "8.89", "*90"), "1.0"),
+    (("1", "five", "8.89", "*90"), "FIVE")
 ])
 def test_in_sequence_string(test_seq, test_value):
     test_type = argparse_custom_types.in_sequence_strings(test_seq)
     with pytest.raises(argparse_custom_types.argparse.ArgumentTypeError):
         test_type(test_value)
+
+
+@pytest.mark.parametrize("test_value, expected_result", [
+    ("two", "two"), ("TWO", "two"), ("three", "three"), ("THREE", "three"),
+    ("4", "4"), ("v1.2", "v1.2"), ("V1.2", "v1.2"),
+])
+def test_in_sequence_strings_case_insensitive(test_value, expected_result):
+    test_list = ["two", "THREE", "4", "5.5", "v1.2", "F5"]
+    test_type = argparse_custom_types.in_sequence_strings(test_list,
+                                                          case_sensitive=False)
+    result = test_type(test_value)
+    assert result == expected_result
+
+
+def test_in_sequence_strings_case_insensitive_fail():
+    test_list = ["two", "THREE", "four"]
+    test_type = argparse_custom_types.in_sequence_strings(test_list,
+                                                          case_sensitive=False)
+    with pytest.raises(argparse_custom_types.argparse.ArgumentTypeError):
+        test_type("FIVE")
 
 
 @pytest.mark.parametrize("test_value, expected_result", [

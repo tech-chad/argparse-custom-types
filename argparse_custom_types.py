@@ -115,23 +115,36 @@ def int_odd(pos_number: bool = True,
 
 def in_sequence_strings(sequence: Union[Tuple[str], List[str]],
                         show_on_invalid: bool = False,
+                        case_sensitive: bool = True,
                         ) -> Callable:
     """
     excepts a value that is in the tuple or list and returns
     that value as a string
+
+    show_on_invalid = True will show a list of acceptable values
+
+    case_sensitive = False will convert to lower case then check if
+    value is in the sequence
     """
     seq_string = ", ".join(sequence)
+    if not case_sensitive:
+        sequence = [x.lower() for x in sequence]
 
     def _in_sequence_strings(value: str) -> str:
+        if not case_sensitive:
+            value = value.lower()
+
         msg = f"{value} is not in the excepted value list"
+
         if show_on_invalid:
             error_msg = f"{msg}\n{seq_string}"
         else:
             error_msg = msg
-        if value not in sequence:
-            raise argparse.ArgumentTypeError(error_msg)
-        else:
+
+        if value in sequence:
             return value
+        else:
+            raise argparse.ArgumentTypeError(error_msg)
 
     return _in_sequence_strings
 

@@ -113,6 +113,38 @@ def test_in_sequence_string_full_fail_show(test_seq, capsys):
 a, string, 1, $4.50""" in captured
 
 
+@pytest.mark.parametrize("test_value, expected_result", [
+    ("ONE", "one"), ("two", "two"), ("TWO", "two"),
+    ("four", "four"),
+])
+def test_in_sequence_string_full_case_insensitive(test_value, expected_result):
+    test_seq = ["one", "TWO", "three", "fOUr"]
+    test_type = argparse_custom_types.in_sequence_strings(test_seq,
+                                                          case_sensitive=False)
+    result = _argparse_runner(test_type, test_value)
+    assert result == expected_result
+
+
+def test_in_sequence_string_full_case_insensitive_fail(capsys):
+    test_seq = ["one", "TWO", "three", "fOUr"]
+    test_type = argparse_custom_types.in_sequence_strings(test_seq,
+                                                          case_sensitive=False)
+    _argparse_runner_raises(test_type, "THree3")
+    captured = capsys.readouterr().err
+    assert "three3 is not in the excepted value list" in captured
+
+
+def test_in_sequence_string_full_case_insensitive_fail_show(capsys):
+    test_seq = ["one", "TWO", "three", "fOUr"]
+    test_type = argparse_custom_types.in_sequence_strings(test_seq,
+                                                          case_sensitive=False,
+                                                          show_on_invalid=True)
+    _argparse_runner_raises(test_type, "THree3")
+    captured = capsys.readouterr().err
+    assert f"""three3 is not in the excepted value list
+one, TWO, three, fOUr""" in captured
+
+
 @pytest.mark.parametrize("options, test_value, expected_results", [
     ((True, False, False), "22", 22),
     ((True, True, False), "-22", -22),
