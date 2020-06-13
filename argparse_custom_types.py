@@ -148,3 +148,31 @@ def in_sequence_strings(sequence: Union[Tuple[str], List[str]],
 
     return _in_sequence_strings
 
+
+def in_sequence_ints(sequence: Union[List[int], Tuple[int]],
+                     show_on_invalid: bool = False) -> Callable:
+    """
+    excepts an int value that is in the sequence
+
+    show_on_invalid = True will show a list on invalid value.
+    """
+    str_sequence = ", ".join([str(x) for x in sequence])
+
+    def _in_sequence_ints(value: str) -> int:
+        msg = f"{value} is not in the excepted int value list"
+
+        if show_on_invalid:
+            error_msg = f"{msg} {str_sequence}"
+        else:
+            error_msg = msg
+
+        try:
+            int_value = int(value)
+        except ValueError:
+            raise argparse.ArgumentTypeError(error_msg)
+        if int_value in sequence:
+            return int_value
+        else:
+            raise argparse.ArgumentTypeError(error_msg)
+
+    return _in_sequence_ints

@@ -191,3 +191,31 @@ def test_int_odd_full_fail(options, test_value, capsys):
     _argparse_runner_raises(test_type, test_value)
     captured = capsys.readouterr().err
     assert f"{test_value} is an invalid odd int" in captured
+
+
+def test_in_sequence_ints():
+    test_seq = [-20, 1, 5000, -5000]
+    test_type = argparse_custom_types.in_sequence_ints(test_seq)
+    result = _argparse_runner(test_type, "5000")
+    assert result == 5000
+
+
+@pytest.mark.parametrize("test_value", [
+    "0", "alpha", "-5001", "654654654654779879879", "V1.2",
+])
+def test_in_sequence_ints_fail(capsys, test_value):
+    test_seq = [-20, 1, 5000, -5000]
+    test_type = argparse_custom_types.in_sequence_ints(test_seq)
+    _argparse_runner_raises(test_type, test_value)
+    captured = capsys.readouterr().err
+    assert f"{test_value} is not in the excepted int value list" in captured
+
+
+def test_in_sequence_ints_fail_show(capsys):
+    test_seq = [-20, 1, 5000, -5000]
+    test_type = argparse_custom_types.in_sequence_ints(test_seq,
+                                                       show_on_invalid=True)
+    _argparse_runner_raises(test_type, "44")
+    captured = capsys.readouterr().err
+    assert "44 is not in the excepted int value " \
+           "list -20, 1, 5000, -5000" in captured

@@ -212,3 +212,24 @@ def test_int_odd_options_fail(options, test_value):
     test_type = argparse_custom_types.int_odd(*options)
     with pytest.raises(argparse_custom_types.argparse.ArgumentTypeError):
         test_type(test_value)
+
+
+@pytest.mark.parametrize("test_value, expected_result", [
+    ("-100", -100), ("200", 200), ("30", 30), ("0", 0),
+    ("-700000", -700000), ("564686516549879879987", 564686516549879879987)
+])
+def test_in_sequence_ints(test_value, expected_result):
+    test_seq = [-100, 200, 50, 30, 0, -700000, 800000, 564686516549879879987]
+    test_type = argparse_custom_types.in_sequence_ints(test_seq)
+    result = test_type(test_value)
+    assert result == expected_result
+
+
+@pytest.mark.parametrize("test_value", [
+    "-101", "alpha", "g100", "9000", "1.1", "0.35",
+])
+def test_in_sequence_ints_fail(test_value):
+    test_seq = [-100, 200, 50, 30, 0, -700000, 800000, 564686516549879879987]
+    test_type = argparse_custom_types.in_sequence_ints(test_seq)
+    with pytest.raises(argparse_custom_types.argparse.ArgumentTypeError):
+        test_type(test_value)
