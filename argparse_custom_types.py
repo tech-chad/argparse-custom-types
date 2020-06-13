@@ -12,7 +12,8 @@ def int_range(start: int, stop: int, step: int = 1) -> Callable:
     excepted_range = [x for x in range(start, stop, step)]
 
     def _int_range(value: str) -> int:
-        error_msg = f"{value} is an invalid int value in range {start} - {stop}"
+        error_msg = f"{value} is an invalid int value in " \
+                    f"range {start} - {stop - 1}"
         try:
             int_value = int(value)
         except ValueError:

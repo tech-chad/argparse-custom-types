@@ -37,7 +37,7 @@ def test_int_range_full_fail(start_stop_step, test_values, capsys):
     _argparse_runner_raises(test_type, test_values)
     captured = capsys.readouterr().err
     assert f"{test_values} is an invalid int value in " \
-           f"range {start} - {stop}" in captured
+           f"range {start} - {stop - 1}" in captured
 
 
 @pytest.mark.parametrize("min_value, test_values, expected_results", [
