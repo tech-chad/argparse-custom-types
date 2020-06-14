@@ -74,7 +74,9 @@ Import argparse_custom_types setup the custom type then pass the function to the
   >  int types 2, -30, 102 would not be accepted
 - **in_sequence_strings**
   ``` python
-  def in_sequence_strings(sequence: Union[Tuple[str], List[str]],show_on_invalid: bool = False):
+  def in_sequence_strings(sequence: Union[Tuple[str], List[str]],
+                          show_on_invalid: bool = False,
+                          case_sensitive: bool = True):
   ```
   - Value that is in the tuple or list and returns that value as a string.
   - example:
@@ -82,5 +84,13 @@ Import argparse_custom_types setup the custom type then pass the function to the
   > t = in_sequence_strings(["one", "test", "parser"])
   > ```
   >
-  >  any value not in the list ["one", "test", "parser"] wou
+  >  any value not in the list ["one", "test", "parser"] will not be accepted
+  >
+
+- **in_sequence_ints**
+- ```python
+  def in_sequence_ints(sequence: Union[List[int], Tuple[int]],
+                       show_on_invalid: bool = False):
+  ```
+  - Int value in sequence will be accepted and return a int value
 
